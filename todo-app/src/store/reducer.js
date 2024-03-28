@@ -6,6 +6,7 @@ const initialState = {
 };
 export const reduce = (state = initialState, action) => {
   const { type, payload } = action;
+  console.log(type);
   switch (type) {
     case "ADD_TODO":
       return { todos: [...state.todos, payload] };
