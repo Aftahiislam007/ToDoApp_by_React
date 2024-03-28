@@ -1,13 +1,14 @@
 import React from "react";
-import { Chip, List, ListItem, ListItemText } from "@mui/material";
+import { Chip, ListItem, ListItemText } from "@mui/material";
 
-const Todo = ({ todo }) => {
+const Todo = ({ todo, handleDelete, handleUpdate }) => {
   // const {todo} = props;
   // console.log(props);
-
   const chipStyle = {
     width: 100,
+    cursor: "pointer",
   };
+
   return (
     <ListItem style={{ background: "rgb(204 204 229)", marginBottom: 4 }}>
       <ListItemText
@@ -16,20 +17,29 @@ const Todo = ({ todo }) => {
           <>
             {todo.due_date}
             <Chip
+              component={"span"}
               label={todo.status}
               size="small"
               variant="outlined"
-              style={{ marginLeft: 20, width: 80 }}
-              color={todo.status === "pending" ? "error" : "success"}
+              style={{ marginLeft: 20, width: 100 }}
+              color={todo.status === "Pending" ? "error" : "success"}
             />
           </>
         }
       />
-      <Chip label="Edit" color="primary" style={ chipStyle } />
       <Chip
-        label="Delete"
+        title="Edit ToDo"
+        label="UPDATE"
+        color="primary"
+        style={chipStyle}
+        onClick={() => handleUpdate(todo)}
+      />
+      <Chip
+        title="Delete ToDo"
+        label="DELETE"
         color="warning"
-        style={ chipStyle }
+        style={chipStyle}
+        onClick={() => handleDelete(todo.id)}
       />
     </ListItem>
   );

@@ -9,28 +9,45 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { ADD_TODO, UPDATE_TODO } from "../store/actionType,";
+import { useEffect } from "react";
 
 const initialState = { title: "", due_date: "", status: "" };
 const STATUS = ["Pending", "Completed"];
 
-const TodoForm = ({ open, handleChange }) => {
+const TodoForm = ({ open, handleClose, todo }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialState);
   const { title, due_date, status } = formData;
-
+  useEffect(() => {
+    if (todo) {
+      setFormData(todo);
+    }
+    else{
+      setFormData(initialState);
+    }
+  }, [todo]);
   const handleInputChange = (e, key) => {
     const { value } = e.target;
     setFormData({ ...formData, [key]: value });
   };
-
+  const resetFormData = () => {
+    setFormData(initialState);
+  };
   const handleSubmit = () => {
-    dispatch({ type: "ADD_TODO", payload: formData });
+    dispatch({ type: ADD_TODO, payload: { id: Math.random(), ...formData } });
+    resetFormData();
+    handleClose();
+  };
+  const handleUpdate = () => {
+    dispatch({ type: UPDATE_TODO, payload: formData });
+    resetFormData();
+    handleClose();
   };
   return (
     <React.Fragment>
       <Dialog
         open={open}
-        onClose={handleChange}
         // PaperProps={{
         //   component: 'form',
         //   onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
@@ -43,10 +60,10 @@ const TodoForm = ({ open, handleChange }) => {
         //   },
         // }}
       >
-        <DialogTitle>Add New ToDo</DialogTitle>
+        <DialogTitle>{todo ? "Update ToDo" : "Add New ToDo"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To create a new ToDo list, please fill up the below form.
+          {todo ? "To update a ToDo list, please fill up all the field below form." : "To create a new ToDo list, please fill up the below form."}
           </DialogContentText>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -86,15 +103,19 @@ const TodoForm = ({ open, handleChange }) => {
                   <em>None</em>
                 </MenuItem>
                 {STATUS.map((st) => (
-                  <MenuItem value={st}>{st}</MenuItem>
+                  <MenuItem key={st} value={st}>{st}</MenuItem>
                 ))}
               </Select>
             </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleChange}>Cancel</Button>
-          <Button onClick={handleSubmit}>Create</Button>
+          <Button onClick={handleClose}>Cancel</Button>
+          {todo ? (
+            <Button onClick={handleUpdate}>Update</Button>
+          ) : (
+            <Button onClick={handleSubmit}>Create</Button>
+          )}
         </DialogActions>
       </Dialog>
     </React.Fragment>
